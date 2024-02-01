@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,13 +26,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.net.URL;
 import java.security.KeyFactory;
-import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 
 @Component
 public class Filter extends OncePerRequestFilter {
@@ -48,6 +46,8 @@ public class Filter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String requestTokenHeader = request.getHeader("Authorization");
+        JWTClaimsSet claimsSet;
+        String msg = "";
         if (!request.getMethod().equals("OPTIONS")) {
             if (requestTokenHeader == null) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing Request header Authorization");
@@ -55,13 +55,15 @@ public class Filter extends OncePerRequestFilter {
                 requestTokenHeader = requestTokenHeader.replace("Bearer ", "");
                 try {
                     RSAPublicKey publicKey = parse(this.publicKey);
-                    // Parse the token
                     SignedJWT signedJWT = SignedJWT.parse(requestTokenHeader);
-                    // Verify the signature
                     JWSVerifier verifier = new RSASSAVerifier(publicKey);
                     if (signedJWT.verify(verifier)) {
-                        // Signature is valid, now you can extract claims from the token
-                        JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+                        claimsSet = signedJWT.getJWTClaimsSet();
+                        Date expirationTime = claimsSet.getExpirationTime();
+                        Date now = new Date();
+                        if (expirationTime != null && expirationTime.before(now)) {
+                            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token is expired");
+                        }
                     } else {
                         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token signature verification failed");
                     }
@@ -69,12 +71,28 @@ public class Filter extends OncePerRequestFilter {
                             requestTokenHeader, null, new ArrayList<>());
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                    filterChain.doFilter(request, response);
-
-                } catch (Exception e) {
-//                    LOGGER.error(e.getMessage());
-                    System.out.println("Error");
                 }
+                catch (ResponseStatusException e) {
+                    msg = e.getReason();
+                }
+                catch (Exception e) {
+                    msg = e.getMessage();
+                }
+
+                if (msg != null && !msg.isEmpty()) {
+                    String sb = "{ " +
+                            "\"error\": \"Unauthorized\"," +
+                            "\"message\": " + "\"" + msg + "\"" + "," +
+                            "\"path\": \"" +
+                            request.getRequestURL() +
+                            "\"" +
+                            "} ";
+                    response.setContentType("application/json");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write(sb);
+                    return;
+                }
+                filterChain.doFilter(request, response);
             }
         }
     }
