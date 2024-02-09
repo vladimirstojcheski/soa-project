@@ -1,0 +1,70 @@
+version: '3.9'
+
+services:
+
+  nexus:
+    image: sonatype/nexus3
+    ports:
+      - "8090:8090"
+    volumes:
+      - type: volume
+        source: nexus-data
+        target: /nexus-data
+    networks:
+      - app-network
+
+  product-catalog:
+    build: product catalog
+    ports:
+      - "8082:8082"
+    networks:
+      - app-network
+    depends_on:
+      - database
+#    environment:
+#      - DATABASE_URL=jdbc:postgresql://database:5432/postgres?currentSchema=product_catalog
+
+#  order-management:
+#    build:
+#      context: ./order-management
+#      dockerfile: Dockerfile
+#    # Other configurations for the order management application service
+#    depends_on:
+#      - product-catalog
+  database:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: sysadm
+      POSTGRES_DB: postgres
+    networks:
+      - app-network
+
+  script-db-schema:
+    image: postgres:latest  # Use a minimal image for running scripts
+    volumes:
+      - ./create_schemas.sh:/create_schemas.sh
+      - ./wait-for-postgres.sh:/wait-for-postgres.sh
+    depends_on:
+      - database
+    entrypoint: /bin/sh -c "/wait-for-postgres.sh && /create_schemas.sh"
+    command: [ "sleep", "infinity" ]  # Keep the container running
+    networks:
+      - app-network
+
+  script-maven:
+    image: maven:latest  # Maven image for running the deploy script
+    volumes:
+      - ./maven.sh:/maven.sh  # Mount the deploy script into the container
+    depends_on:
+      - database
+    entrypoint: /bin/sh -c "/maven.sh"
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  nexus-data:

@@ -31,4 +31,6 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "discount_id", referencedColumnName = "discount_id"))
     private List<Discount> discounts;
 
+    private Integer quantity;
+
 }

@@ -1,4 +1,4 @@
-package mk.ukim.finki.soa.productcatalog.config;
+package mk.finki.ukim.soa.ordermanagement.config;
 
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;

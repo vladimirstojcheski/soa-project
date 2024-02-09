@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>mk.ukim.finki.soa</groupId>
 	<artifactId>product-catalog</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>product catalog</name>
 	<description>product catalog</description>
 	<properties>
