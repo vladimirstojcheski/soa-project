@@ -11,6 +11,28 @@ services:
     networks:
       - app-network
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.1
+    command: ["start-dev", "--import-realm"]
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "admin"
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  user-management:
+    build: user management
+    restart: always
+    ports:
+      - "8086:8086"
+    networks:
+      - app-network
+    depends_on:
+      - keycloak
+
   product-catalog:
     build: product catalog
     ports:
@@ -19,16 +41,17 @@ services:
       - app-network
     depends_on:
       - database
-#    environment:
-#      - DATABASE_URL=jdbc:postgresql://database:5432/postgres?currentSchema=product_catalog
 
-#  order-management:
-#    build:
-#      context: ./order-management
-#      dockerfile: Dockerfile
-#    # Other configurations for the order management application service
-#    depends_on:
-#      - product-catalog
+  order-management:
+    build: order management
+    ports:
+      - "8083:8083"
+    networks:
+      - app-network
+    depends_on:
+      - database
+      - nexus
+
   database:
     image: postgres:latest
     restart: always
@@ -51,14 +74,6 @@ services:
     command: [ "sleep", "infinity" ]  # Keep the container running
     networks:
       - app-network
-
-  script-maven:
-    image: maven:latest  # Maven image for running the deploy script
-    volumes:
-      - ./maven.sh:/maven.sh  # Mount the deploy script into the container
-    depends_on:
-      - database
-    entrypoint: /bin/sh -c "/maven.sh"
 
 networks:
   app-network:

@@ -1,0 +1,12 @@
+<settings>
+    <!-- if you need http connection, enable it and don't block -->
+    <mirrors>
+        <mirror>
+          <id>maven-default-http-blocker</id>
+          <mirrorOf>external:http:*</mirrorOf>
+          <name>Pseudo repository to mirror external repositories initially using HTTP.</name>
+          <url>http://host.docker.internal:8081/repository/maven-releases/</url>
+          <blocked>false</blocked>
+        </mirror>
+    </mirrors>
+</settings>

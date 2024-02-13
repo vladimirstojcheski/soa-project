@@ -1,8 +1,9 @@
 package mk.finki.ukim.soa.ordermanagement.service;
 
 import mk.finki.ukim.soa.ordermanagement.model.Order;
+import mk.finki.ukim.soa.ordermanagement.model.dao.OrderDto;
 
 public interface OrderService {
-    Order getOrder(String id);
-    Order makeOrder(Order order);
+    OrderDto getOrder(String id);
+    OrderDto makeOrder(Order order);
 }

@@ -1,5 +1,6 @@
 package mk.finki.ukim.soa.ordermanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,7 +17,8 @@ public class Item {
     private Double price;
     private Integer quantity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="order_id")
+    @JsonIgnore
     private Order order;
 }

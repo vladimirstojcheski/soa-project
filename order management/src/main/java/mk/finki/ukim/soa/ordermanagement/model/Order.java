@@ -14,12 +14,15 @@ public class Order {
     @Column(name = "order_id")
     private String id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "contact_id")
     private Contact contact;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<Item> items;
+
     private Boolean toDeliver;
+
+    private Double totalPrice;
 
 }

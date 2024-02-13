@@ -1,5 +1,6 @@
 package mk.finki.ukim.soa.ordermanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,10 +13,11 @@ public class Contact {
     @Column(name = "contact_id")
     private String id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
 
-    @OneToOne(mappedBy = "contact")
+    @JsonIgnore
+    @OneToOne(mappedBy = "contact", fetch = FetchType.LAZY)
     private Order order;
 
     private String phoneNumber;

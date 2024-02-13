@@ -10,7 +10,7 @@
     </parent>
     <groupId>mk.finki.ukim.soa</groupId>
     <artifactId>order-management</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>order management</name>
     <description>order management</description>
     <properties>
@@ -104,7 +104,17 @@
         <dependency>
             <groupId>mk.ukim.finki.soa</groupId>
             <artifactId>product-catalog-model</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.5.5.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>1.5.5.Final</version>
         </dependency>
 
     </dependencies>
@@ -129,13 +139,15 @@
     <repositories>
         <repository>
             <id>nexus</id>
-            <url>http://localhost:8081/repository/maven-releases/</url>
+<!--            <url>http://localhost:8081/repository/maven-releases/</url>-->
+            <url>http://host.docker.internal/repository/maven-releases/</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>nexus</id>
-            <url>http://localhost:8081/repository/maven-releases/</url>
+<!--            <url>http://localhost:8081/repository/maven-releases/</url>-->
+            <url>http://host.docker.internal:8081/repository/maven-releases/</url>
         </pluginRepository>
     </pluginRepositories>
 
