@@ -137,18 +137,32 @@
     </build>
 
     <repositories>
+        <!-- Define Apache Maven Central repository -->
         <repository>
-            <id>nexus</id>
-<!--            <url>http://localhost:8081/repository/maven-releases/</url>-->
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+
+        <!-- Define your private repository -->
+        <repository>
+            <id>private-repo</id>
             <url>http://host.docker.internal/repository/maven-releases/</url>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>nexus</id>
-<!--            <url>http://localhost:8081/repository/maven-releases/</url>-->
-            <url>http://host.docker.internal:8081/repository/maven-releases/</url>
-        </pluginRepository>
-    </pluginRepositories>
+
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>nexus</id>-->
+<!--&lt;!&ndash;            <url>http://localhost:8081/repository/maven-releases/</url>&ndash;&gt;-->
+<!--            <url>http://host.docker.internal/repository/maven-releases/</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+<!--    <pluginRepositories>-->
+<!--        <pluginRepository>-->
+<!--            <id>nexus</id>-->
+<!--&lt;!&ndash;            <url>http://localhost:8081/repository/maven-releases/</url>&ndash;&gt;-->
+<!--            <url>http://host.docker.internal:8081/repository/maven-releases/</url>-->
+<!--        </pluginRepository>-->
+<!--    </pluginRepositories>-->
 
 </project>

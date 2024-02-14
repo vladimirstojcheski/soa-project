@@ -21,6 +21,8 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<Item> items;
 
+    private String username;
+
     private Boolean toDeliver;
 
     private Double totalPrice;

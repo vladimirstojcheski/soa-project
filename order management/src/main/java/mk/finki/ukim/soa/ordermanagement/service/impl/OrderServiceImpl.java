@@ -6,6 +6,7 @@ import mk.finki.ukim.soa.ordermanagement.model.dao.OrderDto;
 import mk.finki.ukim.soa.ordermanagement.repository.OrderRepository;
 import mk.finki.ukim.soa.ordermanagement.service.OrderService;
 import mk.finki.ukim.soa.ordermanagement.service.ProductCatalogService;
+import mk.finki.ukim.soa.ordermanagement.service.SecurityLayerService;
 import mk.finki.ukim.soa.ordermanagement.service.mapper.OrderMapper;
 import mk.ukim.finki.soa.productcatalog.model.dto.ProductDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     ProductCatalogService productCatalogService;
+
+    @Autowired
+    SecurityLayerService securityLayerService;
 
     @Autowired
     OrderRepository orderRepository;
@@ -34,6 +38,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto makeOrder(Order order) {
         Double price = 0D;
+        order.setUsername(securityLayerService.getUsername());
         for (Item item : order.getItems()) {
             ProductDto productDto = productCatalogService.getProductById(item.getCatalog_id());
             price += productDto.getDiscountedPrice();

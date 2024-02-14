@@ -1,12 +1,47 @@
-<settings>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <!-- if you need http connection, enable it and don't block -->
     <mirrors>
         <mirror>
           <id>maven-default-http-blocker</id>
-          <mirrorOf>external:http:*</mirrorOf>
+          <mirrorOf>private-repo</mirrorOf>
           <name>Pseudo repository to mirror external repositories initially using HTTP.</name>
           <url>http://host.docker.internal:8081/repository/maven-releases/</url>
-          <blocked>false</blocked>
+<!--          <blocked>false</blocked>-->
         </mirror>
     </mirrors>
+    <profiles>
+        <profile>
+            <id>custom-repos</id>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+
+                <repository>
+                    <id>private-repo</id>
+                    <url>http://host.docker.internal:8081/repository/maven-releases/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>custom-repos</activeProfile>
+    </activeProfiles>
 </settings>
