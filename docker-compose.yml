@@ -30,8 +30,6 @@ services:
       - "8086:8086"
     networks:
       - app-network
-    depends_on:
-      - keycloak
 
   product-catalog:
     build: product catalog
